@@ -1,0 +1,60 @@
+mysql:
+  host: localhost
+  port: 3306
+  username: root
+  password: password
+
+backupTypes:
+  schemaTotal: true
+  schemaIncremental: true
+  serverTotal: true
+  serverIncremental: true
+
+scheduling:
+  schemaTotal:
+    frequency: daily
+    time: "02:00"
+    maxExecutionTime: 60
+  schemaIncremental:
+    frequency: daily
+    time: "04:00"
+    maxExecutionTime: 30
+  serverTotal:
+    frequency: weekly
+    dayOfWeek: "Sunday"
+    time: "03:00"
+    maxExecutionTime: 120
+  serverIncremental:
+    frequency: daily
+    time: "06:00"
+    maxExecutionTime: 45
+
+notifications:
+  email:
+    enabled: true
+    smtp:
+      host: smtp.example.com
+      port: 587
+      username: user@example.com
+      password: password
+    recipients: recipient1@example.com,recipient2@example.com
+
+backupDestinations:
+  digitalOceanSpaces:
+    enabled: true
+    accessKey: DO_ACCESS_KEY
+    secretKey: DO_SECRET_KEY
+    region: nyc3
+    bucket: my-backups
+  awsS3:
+    enabled: false
+    accessKey: AWS_ACCESS_KEY
+    secretKey: AWS_SECRET_KEY
+    region: us-west-2
+    bucket: my-backups
+
+encryption:
+  rsaPublicKeyPath: /path/to/public.key
+
+retention:
+  days: 30

@@ -1,0 +1,14 @@
+apiVersion: v2
+name: mysql-backup
+description: A Helm chart for MySQL backup jobs
+version: 0.1.0
+
+maintainers:
+  - name: Sandro Cicero
+    email: sandro.cicero@example.com
+
+keywords:
+  - mysql
+  - backup
+  - kubernetes
+  - helm

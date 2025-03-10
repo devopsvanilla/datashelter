@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-backup-notification
+spec:
+  template:
+    spec:
+      containers:
+        - name: notification
+          image: notification-image:latest
+          env:
+            - name: EMAIL_ENABLED
+              value: "{{ .Values.notifications.email.enabled }}"
+            - name: SMTP_HOST
+              value: "{{ .Values.notifications.email.smtp.host }}"
+            - name: SMTP_PORT
+              value: "{{ .Values.notifications.email.smtp.port }}"
+            - name: SMTP_USERNAME
+              value: "{{ .Values.notifications.email.smtp.username }}"
+            - name: SMTP_PASSWORD
+              value: "{{ .Values.notifications.email.smtp.password }}"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/backup
+      volumes:
+        - name: config-volume
+          configMap:
+            name: mysql-backup-config
+      restartPolicy: Never
