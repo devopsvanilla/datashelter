@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-backup-config
+data:
+  backupTypes: |
+    schemaTotal: {{ .Values.backupTypes.schemaTotal }}
+    schemaIncremental: {{ .Values.backupTypes.schemaIncremental }}
+    serverTotal: {{ .Values.backupTypes.serverTotal }}
+    serverIncremental: {{ .Values.backupTypes.serverIncremental }}
+  scheduling: |
+    frequency: {{ .Values.scheduling.frequency }}
+    time: {{ .Values.scheduling.time }}
+    maxExecutionTime: {{ .Values.scheduling.maxExecutionTime }}
