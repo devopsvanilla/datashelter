@@ -1,37 +1,30 @@
 # mysql-k8s-backup
 
+[![Versão em Português](https://img.shields.io/badge/README-pt--BR-green)](README_pt-BR.md)
+
+
 K8S automation for MySQL backups
 
-## Objetivos da Solução
+## Solution Objectives
 
-A solução de backup de MySQL utilizando Helm tem como objetivo automatizar o processo de backup de bancos de dados MySQL em um ambiente Kubernetes. A solução oferece suporte a diferentes tipos de backup, agendamento flexível, notificações por e-mail, múltiplos destinos de backup, criptografia de dados e gerenciamento de retenção de backups.
+The MySQL backup solution using Helm aims to automate the process of backing up MySQL databases in a Kubernetes environment. The solution supports different types of backups, flexible scheduling, email notifications, multiple backup destinations, data encryption, and backup retention management.
 
-## Documentação
+## Documentation
 
-A documentação completa da solução está disponível no diretório `/docs`. A documentação inclui:
+- Solution architecture
+- Features
+- Configuration details
+- How to deploy the solution
+- How to verify if the deployment was successful
+- How to monitor backup execution
+- How to delete the solution
+- How to configure solution dependencies, such as buckets on AWS and Digital Ocean
+- How to generate encryption keys
+- Other important tips and references
 
-- Arquitetura da solução
-- Funcionalidades
-- Detalhes de configuração
-- Como implantar a solução
-- Como verificar se a implantação ocorreu com sucesso
-- Como monitorar a execução dos backups
-- Como excluir a solução
-- Como configurar as dependências da solução, como buckets na AWS e Digital Ocean
-- Como gerar chaves de criptografia
-- Outras dicas e referências importantes
+### Solution Architecture
 
-## Arquitetura
-
-A solução de backup de MySQL é composta pelos seguintes componentes:
-
-- **Job e CronJob**: Recursos do Kubernetes para executar tarefas de backup
-- **ConfigMap**: Armazena a configuração do backup
-- **Secret**: Armazena credenciais sensíveis do MySQL
-- **PersistentVolumeClaim**: Armazena os arquivos de backup
-- **Job de Notificação**: Envia notificações por e-mail
-
-## Diagrama da Arquitetura da Solução
+The MySQL backup solution consists of the following components:
 
 ```mermaid
 graph TD
@@ -53,22 +46,22 @@ graph TD
     H -->|Uses| E
 ```
 
-## Funcionalidades
+### Features
 
-A solução oferece as seguintes funcionalidades:
+The solution offers the following features:
 
-- **Tipos de Backup**: Suporte a backups de esquema total, esquema incremental, servidor total e servidor incremental.
-- **Agendamento**: Permite configurar múltiplos agendamentos de backup com diferentes frequências e horários de execução.
-- **Notificações por E-mail**: Envia notificações por e-mail sobre a conclusão e erros dos backups, com suporte a múltiplos destinatários.
-- **Destinos de Backup**: Suporte a armazenamento de backups no Digital Ocean Spaces e AWS S3.
-- **Criptografia**: Criptografa os backups utilizando chaves públicas RSA.
-- **Retenção**: Gerencia a retenção de backups, excluindo automaticamente backups antigos após um período especificado.
+- **Backup Types**: Support for full schema, incremental schema, full server, and incremental server backups.
+- **Scheduling**: Allows configuring multiple backup schedules with different frequencies and execution times.
+- **Email Notifications**: Sends email notifications about backup completion and errors, with support for multiple recipients.
+- **Backup Destinations**: Support for storing backups in Digital Ocean Spaces and AWS S3.
+- **Encryption**: Encrypts backups using RSA public keys.
+- **Retention**: Manages backup retention, automatically deleting old backups after a specified period.
 
-## Detalhes de Configuração
+### Configuration Details
 
-A configuração da solução de backup de MySQL é gerenciada através do arquivo `values.yaml`. Aqui estão as principais seções de configuração:
+The MySQL backup solution configuration is managed through the `values.yaml` file. Here are the main configuration sections:
 
-- **Detalhes de Conexão MySQL**: Configure o host, porta, nome de usuário e senha do MySQL.
+- **MySQL Connection Details**: Configure the MySQL host, port, username, and password.
   
   ```yaml
   mysql:
@@ -78,7 +71,7 @@ A configuração da solução de backup de MySQL é gerenciada através do arqui
     password: password
   ```
 
-- **Tipos de Backup**: Habilite ou desabilite diferentes tipos de backups.
+- **Backup Types**: Enable or disable different types of backups.
   
   ```yaml
   backupTypes:
@@ -88,7 +81,7 @@ A configuração da solução de backup de MySQL é gerenciada através do arqui
     serverIncremental: true
   ```
 
-- **Agendamento**: Configure os parâmetros de agendamento para cada tipo de backup.
+- **Scheduling**: Configure the scheduling parameters for each type of backup.
 
   ```yaml
   scheduling:
@@ -111,7 +104,7 @@ A configuração da solução de backup de MySQL é gerenciada através do arqui
       maxExecutionTime: 45
   ```
 
-- **Notificações por E-mail**: Configure os parâmetros de notificação por e-mail.
+- **Email Notifications**: Configure the email notification parameters.
 
   ```yaml
   notifications:
@@ -125,7 +118,7 @@ A configuração da solução de backup de MySQL é gerenciada através do arqui
       recipients: recipient1@example.com,recipient2@example.com
   ```
 
-- **Destinos de Backup**: Configure as configurações para Digital Ocean Spaces e AWS S3.
+- **Backup Destinations**: Configure the settings for Digital Ocean Spaces and AWS S3.
 
   ```yaml
   backupDestinations:
@@ -143,105 +136,109 @@ A configuração da solução de backup de MySQL é gerenciada através do arqui
       bucket: my-backups
   ```
 
-- **Criptografia**: Configure a chave pública RSA para criptografia.
+- **Encryption**: Configure the RSA public key for encryption.
 
   ```yaml
   encryption:
     rsaPublicKeyPath: /path/to/public.key
   ```
 
-- **Retenção**: Configure o período de retenção dos backups.
+- **Retention**: Configure the backup retention period.
 
   ```yaml
   retention:
     days: 30
   ```
 
-## Casos de Uso
+### Use Cases
 
-A solução de backup de MySQL pode ser utilizada em diversos cenários para garantir backups confiáveis e automatizados de bancos de dados MySQL. Aqui estão alguns casos de uso:
+The MySQL backup solution can be used in various scenarios to ensure reliable and automated backups of MySQL databases. Here are some use cases:
 
-- **Backups Incrementais Diários**: Configure backups incrementais diários para capturar as alterações feitas no banco de dados ao longo do dia.
-- **Backups Completos Semanais**: Agende backups completos semanais para criar um snapshot completo do banco de dados, incluindo dados e estrutura.
-- **Notificações por E-mail**: Configure notificações por e-mail para receber alertas sobre a conclusão e erros dos backups, garantindo a conscientização oportuna sobre o status dos backups.
-- **Backups em Múltiplos Destinos**: Armazene backups em múltiplos destinos, como Digital Ocean Spaces e AWS S3, para redundância e recuperação de desastres.
-- **Backups Criptografados**: Criptografe os backups utilizando chaves públicas RSA para garantir a segurança dos dados e conformidade com requisitos regulatórios.
-- **Retenção de Backups**: Gerencie a retenção de backups excluindo automaticamente backups antigos após um período especificado, otimizando o uso de armazenamento.
+- **Daily Incremental Backups**: Configure daily incremental backups to capture changes made to the database throughout the day.
+- **Weekly Full Backups**: Schedule weekly full backups to create a complete snapshot of the database, including data and structure.
+- **Email Notifications**: Configure email notifications to receive alerts about backup completion and errors, ensuring timely awareness of backup status.
+- **Backups to Multiple Destinations**: Store backups in multiple destinations, such as Digital Ocean Spaces and AWS S3, for redundancy and disaster recovery.
+- **Encrypted Backups**: Encrypt backups using RSA public keys to ensure data security and compliance with regulatory requirements.
+- **Backup Retention**: Manage backup retention by automatically deleting old backups after a specified period, optimizing storage usage.
 
-## Como Implantar a Solução
+### How to Deploy the Solution
 
-### Pré-requisitos
+#### Prerequisites
 
-- Kubernetes cluster configurado.
-- Helm instalado.
+- Configured Kubernetes cluster.
+- Installed Helm.
 
-### Passos para Implantação
+#### Deployment Steps
 
-1. Clone o repositório:
+1. Clone the repository:
 
    ```sh
    git clone https://github.com/devopsvanilla/mysql-k8s-backup.git
    cd mysql-k8s-backup
    ```
 
-2. Configure o arquivo `values.yaml` conforme necessário.
+2. Configure the `values.yaml` file as needed.
 
-3. Implante a solução utilizando Helm:
+3. Deploy the solution using Helm:
 
    ```sh
    helm install mysql-backup ./helm/mysql-backup
    ```
 
-## Verificação da Implantação
+### Deployment Verification
 
-Para verificar se a implantação ocorreu com sucesso, execute o seguinte comando:
+To verify if the deployment was successful, run the following command:
 
 ```sh
 kubectl get pods
 ```
 
-Verifique se os pods relacionados ao backup do MySQL estão em execução.
+Check if the pods related to the MySQL backup are running.
 
-## Monitoramento da Execução dos Backups
+### Monitoring Backup Execution
 
-Para monitorar a execução dos backups, você pode verificar os logs dos pods:
+To monitor the execution of backups, you can check the logs of the pods:
 
 ```sh
-kubectl logs <nome-do-pod>
+kubectl logs <pod-name>
 ```
 
-## Exclusão da Solução
+### Deleting the Solution
 
-Para excluir a solução, execute o seguinte comando:
+To delete the solution, run the following command:
 
 ```sh
 helm uninstall mysql-backup
 ```
 
-## Configuração de Dependências
+### Dependency Configuration
 
-### Configuração de Buckets na AWS e Digital Ocean
+#### Configuring Buckets on AWS and Digital Ocean
 
-- **AWS S3**: Crie um bucket no AWS S3 e configure as credenciais de acesso no arquivo `values.yaml`.
-- **Digital Ocean Spaces**: Crie um bucket no Digital Ocean Spaces e configure as credenciais de acesso no arquivo `values.yaml`.
+- **AWS S3**: Create a bucket on AWS S3 and configure the access credentials in the `values.yaml` file.
+- **Digital Ocean Spaces**: Create a bucket on Digital Ocean Spaces and configure the access credentials in the `values.yaml` file.
 
-### Geração de Chaves de Criptografia
+#### Generating Encryption Keys
 
-Para gerar chaves RSA para criptografia, execute o seguinte comando:
+To generate RSA keys for encryption, run the following command:
 
 ```sh
 openssl genrsa -out private.key 2048
 openssl rsa -in private.key -pubout -out public.key
 ```
 
-Configure o caminho para a chave pública no arquivo `values.yaml`.
+Configure the path to the public key in the `values.yaml` file.
 
-## Outras Dicas e Referências
+### Other Tips and References
 
-- Certifique-se de que o cluster Kubernetes tenha recursos suficientes para executar os jobs de backup.
-- Verifique regularmente os logs dos pods para garantir que os backups estão sendo executados conforme esperado.
-- Consulte a documentação oficial do Helm e Kubernetes para obter mais informações sobre como gerenciar e monitorar recursos no cluster.
+- Ensure that the Kubernetes cluster has sufficient resources to run the backup jobs.
+- Regularly check the logs of the pods to ensure that backups are being executed as expected.
+- Refer to the official Helm and Kubernetes documentation for more information on managing and monitoring resources in the cluster.
 
-## Conclusão
+## Conclusion
 
-A solução de backup de MySQL utilizando Helm oferece uma maneira automatizada e flexível de gerenciar backups de bancos de dados MySQL em um ambiente Kubernetes. Com suporte a diferentes tipos de backup, agendamento flexível, notificações por e-mail, múltiplos destinos de backup, criptografia de dados e gerenciamento de retenção, a solução garante a segurança e disponibilidade dos dados do banco de dados.
+The MySQL backup solution using Helm offers an automated and flexible way to manage MySQL database backups in a Kubernetes environment. With support for different types of backups, flexible scheduling, email notifications, multiple backup destinations, data encryption, and retention management, the solution ensures the security and availability of database data.
+
+___
+
+Made with 💙 by [DevOps Vanilla.guru](https://DevOpsVanilla.guru)
