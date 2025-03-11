@@ -36,21 +36,21 @@ A solução de backup de MySQL é composta pelos seguintes componentes:
 ```mermaid
 graph TD
     A[Kubernetes Cluster] -->|Deploy| B[Helm Chart]
-    B -->|Creates| C[Job]
-    B -->|Creates| D[CronJob]
-    B -->|Creates| E[ConfigMap]
-    B -->|Creates| F[Secret]
-    B -->|Creates| G[PersistentVolumeClaim]
-    B -->|Creates| H[Notification Job]
-    C -->|Executes| I[Backup Script]
-    D -->|Schedules| I
-    I -->|Stores Backup| G
-    I -->|Uploads to| J[Digital Ocean Spaces]
-    I -->|Uploads to| K[AWS S3]
-    I -->|Encrypts with| L[RSA Public Key]
+    B -->|Cria| C[Job]
+    B -->|Cria| D[CronJob]
+    B -->|Cria| E[ConfigMap]
+    B -->|Cria| F[Secret]
+    B -->|Cria| G[PersistentVolumeClaim]
+    B -->|Cria| H[Notification Job]
+    C -->|Executa| I[Backup Script]
+    D -->|Agenda| I
+    I -->|Armazena a cópia| G
+    I -->|Upload para| J[Digital Ocean Spaces]
+    I -->|Upload para| K[AWS S3]
+    I -->|Criptografa para| L[RSA Public Key]
     I -->|Sends Notification| H
-    H -->|Uses| F
-    H -->|Uses| E
+    H -->|Usa| F
+    H -->|Usa| E
 ```
 
 ### Funcionalidades
