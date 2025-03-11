@@ -2,17 +2,12 @@
 
 [![English Version](https://img.shields.io/badge/lang-english-blue.svg)](README.md)
 
-Automação em MySQL para backups usando K8S
+Essa solução de automatizada de backup para MySQL utilizando Helm oferece uma maneira flexível e eficiente com consumo mínimo de recursos para gerenciar backups de bancos de dados MySQL utilizando como ambiente de execução o Kubernetes. Com suporte a diferentes tipos de backup, agendamento flexível, notificações por e-mail, múltiplos destinos de backup, criptografia de dados e gerenciamento de retenção, a solução garante a segurança e disponibilidade dos dados do banco de dados.
 
-## Objetivos da Solução
-
-A solução de backup de MySQL utilizando Helm tem como objetivo automatizar o processo de backup de bancos de dados MySQL em um ambiente Kubernetes. A solução oferece suporte a diferentes tipos de backup, agendamento flexível, notificações por e-mail, múltiplos destinos de backup, criptografia de dados e gerenciamento de retenção de backups.
-
-## Documentação
+## Sobre
 
 - [mysql-k8s-backup ](#mysql-k8s-backup-)
-  - [Objetivos da Solução](#objetivos-da-solução)
-  - [Documentação](#documentação)
+  - [Sobre](#sobre)
     - [Arquitetura da solução](#arquitetura-da-solução)
     - [Funcionalidades](#funcionalidades)
     - [Detalhes de Configuração](#detalhes-de-configuração)
@@ -27,7 +22,6 @@ A solução de backup de MySQL utilizando Helm tem como objetivo automatizar o p
       - [Configuração de Buckets na AWS e Digital Ocean](#configuração-de-buckets-na-aws-e-digital-ocean)
       - [Geração de Chaves de Criptografia](#geração-de-chaves-de-criptografia)
     - [Outras Dicas e Referências](#outras-dicas-e-referências)
-  - [Conclusão](#conclusão)
 
 ### Arquitetura da solução
 
@@ -44,13 +38,13 @@ graph TD
     B -->|Cria| H[Notification Job]
     C -->|Executa| I[Backup Script]
     D -->|Agenda| I
-    I -->|Armazena a cópia| G
-    I -->|Upload para| J[Digital Ocean Spaces]
-    I -->|Upload para| K[AWS S3]
-    I -->|Criptografa para| L[RSA Public Key]
-    I -->|Sends Notification| H
-    H -->|Usa| F
-    H -->|Usa| E
+    I -->|Armazena| G
+    I -->|Upload| J[Digital Ocean Spaces]
+    I -->|Upload| K[AWS S3]
+    I -->|Criptografa| L[RSA Public Key]
+    I -->|Envia| H
+    H -->|Utiliza| F
+    H -->|Utiliza| E
 ```
 
 ### Funcionalidades
@@ -241,10 +235,6 @@ Configure o caminho para a chave pública no arquivo `values.yaml`.
 - Certifique-se de que o cluster Kubernetes tenha recursos suficientes para executar os jobs de backup.
 - Verifique regularmente os logs dos pods para garantir que os backups estão sendo executados conforme esperado.
 - Consulte a documentação oficial do Helm e Kubernetes para obter mais informações sobre como gerenciar e monitorar recursos no cluster.
-
-## Conclusão
-
-A solução de backup de MySQL utilizando Helm oferece uma maneira automatizada e flexível de gerenciar backups de bancos de dados MySQL em um ambiente Kubernetes. Com suporte a diferentes tipos de backup, agendamento flexível, notificações por e-mail, múltiplos destinos de backup, criptografia de dados e gerenciamento de retenção, a solução garante a segurança e disponibilidade dos dados do banco de dados.
 
 ___
 

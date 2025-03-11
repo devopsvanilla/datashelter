@@ -2,25 +2,26 @@
 
 [![Versão em Português](https://img.shields.io/badge/README-pt--BR-green)](README_pt-BR.md)
 
+This MySQL backup automation solution using Helm offers an automated and flexible way to manage MySQL database backups in a Kubernetes environment. Designed with efficiency in mind, it delivers high performance while maintaining a lightweight footprint. With support for different types of backups, flexible scheduling, email notifications, multiple backup destinations, data encryption, and retention management, the solution ensures the security, availability, and optimized resource utilization of database data
 
-K8S automation for MySQL backups
+## About
 
-## Solution Objectives
-
-The MySQL backup solution using Helm aims to automate the process of backing up MySQL databases in a Kubernetes environment. The solution supports different types of backups, flexible scheduling, email notifications, multiple backup destinations, data encryption, and backup retention management.
-
-## Documentation
-
-- Solution architecture
-- Features
-- Configuration details
-- How to deploy the solution
-- How to verify if the deployment was successful
-- How to monitor backup execution
-- How to delete the solution
-- How to configure solution dependencies, such as buckets on AWS and Digital Ocean
-- How to generate encryption keys
-- Other important tips and references
+- [mysql-k8s-backup](#mysql-k8s-backup)
+  - [About](#about)
+    - [Solution Architecture](#solution-architecture)
+    - [Features](#features)
+    - [Configuration Details](#configuration-details)
+    - [Use Cases](#use-cases)
+    - [How to Deploy the Solution](#how-to-deploy-the-solution)
+      - [Prerequisites](#prerequisites)
+      - [Deployment Steps](#deployment-steps)
+    - [Deployment Verification](#deployment-verification)
+    - [Monitoring Backup Execution](#monitoring-backup-execution)
+    - [Deleting the Solution](#deleting-the-solution)
+    - [Dependency Configuration](#dependency-configuration)
+      - [Configuring Buckets on AWS and Digital Ocean](#configuring-buckets-on-aws-and-digital-ocean)
+      - [Generating Encryption Keys](#generating-encryption-keys)
+    - [Other Tips and References](#other-tips-and-references)
 
 ### Solution Architecture
 
@@ -37,11 +38,11 @@ graph TD
     B -->|Creates| H[Notification Job]
     C -->|Executes| I[Backup Script]
     D -->|Schedules| I
-    I -->|Stores Backup| G
-    I -->|Uploads to| J[Digital Ocean Spaces]
-    I -->|Uploads to| K[AWS S3]
-    I -->|Encrypts with| L[RSA Public Key]
-    I -->|Sends Notification| H
+    I -->|Stores| G
+    I -->|Upload| J[Digital Ocean Spaces]
+    I -->|Upload| K[AWS S3]
+    I -->|Encrypt| L[RSA Public Key]
+    I -->|Send| H
     H -->|Uses| F
     H -->|Uses| E
 ```
@@ -234,10 +235,6 @@ Configure the path to the public key in the `values.yaml` file.
 - Ensure that the Kubernetes cluster has sufficient resources to run the backup jobs.
 - Regularly check the logs of the pods to ensure that backups are being executed as expected.
 - Refer to the official Helm and Kubernetes documentation for more information on managing and monitoring resources in the cluster.
-
-## Conclusion
-
-The MySQL backup solution using Helm offers an automated and flexible way to manage MySQL database backups in a Kubernetes environment. With support for different types of backups, flexible scheduling, email notifications, multiple backup destinations, data encryption, and retention management, the solution ensures the security and availability of database data.
 
 ___
 
