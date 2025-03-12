@@ -1,0 +1,2 @@
+setup/*sealedscrets-key.yaml # Ensure that the selead secrets public key is not checked into the repository
+setup/*__test-secret.yaml # Ensure that the test secret is not checked into the repository
