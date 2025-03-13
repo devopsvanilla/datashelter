@@ -2,7 +2,7 @@
 
 # Function to display correct script usage
 usage() {
-  echo "Usage: $0 --name=my-secret --namespace=default --key \"key1|value1\" --key \"key2|value2\""
+  echo "❌ Usage: $0 --name=my-secret --namespace=default --key \"key1|value1\" --key \"key2|value2\" --output=my-secret.yaml"
   exit 1
 }
 
@@ -27,6 +27,9 @@ while [[ "$#" -gt 0 ]]; do
     --name=*)
       SECRET_NAME="${1#--name=}"
       ;;
+    --output=*)
+      OUTPUT_FILE="${1#--output=}"
+      ;;
     *)
       usage
       ;;
@@ -35,7 +38,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Validate required parameters
-if [[ -z "$NAMESPACE" || -z "$SECRET_NAME" || ${#KEYS[@]} -eq 0 ]]; then
+if [[ -z "$NAMESPACE" || -z "$SECRET_NAME" || ${#KEYS[@]}  -eq 0 || -z "$OUTPUT_FILE" ]]; then
   usage
 fi
 
@@ -63,7 +66,6 @@ for KEY in "${!KEYS[@]}"; do
 done
 
 # Save the YAML file
-OUTPUT_FILE="${SECRET_NAME}_sealedsecret.yaml"
 echo "$SEALED_SECRET" > "$OUTPUT_FILE"
 
 echo "✅ SealedSecret saved in: $OUTPUT_FILE"

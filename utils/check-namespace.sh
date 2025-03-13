@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+trap 'echo "❌ Error at line $LINENO in script $0"; exit 1' ERR
+
 # Function to display an error message and exit
 function show_error_and_exit {
   echo "❌ Error: You must provide a namespace name using the --name parameter."
@@ -21,10 +24,13 @@ if [ -z "$NAMESPACE" ]; then
 fi
 
 # Check if the namespace already exists
+echo -e
+echo "⏳  Creating namespace $DATASHELTER_NAMESPACE..."
+
 if kubectl get namespace "$NAMESPACE" > /dev/null 2>&1; then
   echo "✅ The namespace '$NAMESPACE' already exists."
 else
   echo "⚠️ The namespace '$NAMESPACE' does not exist. Creating it now..."
   kubectl create namespace "$NAMESPACE"
-  echo "🎉 Namespace '$NAMESPACE' created successfully."
+  echo "✅ Namespace '$NAMESPACE' created successfully."
 fi
