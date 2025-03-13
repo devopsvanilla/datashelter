@@ -1,14 +1,8 @@
 # DataShelter
 
-```text
-┳┓     ┏┓┓   ┓
-┃┃┏┓╋┏┓┗┓┣┓┏┓┃╋┏┓┏┓
-┻┛┗┻┗┗┻┗┛┛┗┗ ┗┗┗ ┛ 
-```
+![DataShelter](./images/DataShelter.png)
 
-K8S automation for database backups
-
-Made with ❤️ by https://devopsvanilla.guru
+Made with ❤️ by [DevOps Vanilla](https://devopsvanilla.guru)
 
 [![Versão em Português](https://img.shields.io/badge/README-pt--BR-green)](README_pt-BR.md)
 
@@ -247,7 +241,5 @@ Configure the path to the public key in the `values.yaml` file.
 - Refer to the official Helm and Kubernetes documentation for more information on managing and monitoring resources in the cluster.
 
 ___
-
-Logo by: https://patorjk.com/software/taag/#p=display&h=0&v=0&c=bash&f=Tmplr&t=DataShelter
 
 Made with 💙 by [DevOps Vanilla.guru](https://DevOpsVanilla.guru)

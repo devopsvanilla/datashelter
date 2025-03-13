@@ -1,4 +1,8 @@
-# mysql-k8s-backup [](README.md)
+# DataShelter
+
+![DataShelter](./images/DataShelter.png)
+
+Made with ❤️ by [DevOps Vanilla](https://devopsvanilla.guru)
 
 [![English Version](https://img.shields.io/badge/lang-english-blue.svg)](README.md)
 
@@ -6,7 +10,7 @@ Essa solução de automatizada de backup para MySQL utilizando Helm oferece uma 
 
 ## Sobre
 
-- [mysql-k8s-backup ](#mysql-k8s-backup-)
+- [DataShelter](#datashelter)
   - [Sobre](#sobre)
     - [Arquitetura da solução](#arquitetura-da-solução)
     - [Funcionalidades](#funcionalidades)
