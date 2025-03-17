@@ -1,0 +1,262 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Creates a secure S3 bucket with enhanced security features and best practices for use in backups
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name for the S3 bucket
+    AllowedPattern: '^[a-z0-9][a-z0-9\.\-]{1,61}[a-z0-9]$'
+    ConstraintDescription: Bucket name must be between 3 and 63 characters, contain only lowercase letters, numbers, periods, and dashes, and start and end with a letter or number.
+  
+  IamUser:
+    Type: String
+    Description: Name for the IAM user
+    AllowedPattern: '^[\w+=,.@-]{1,64}$'
+    ConstraintDescription: IAM user name must be between 1 and 64 alphanumeric characters or these special characters - _+=,.@-
+  
+  Environment:
+    Type: String
+    AllowedValues: 
+      - Development
+      - Staging
+      - Production
+    Description: Environment where the resources will be deployed
+
+  DataClassification:
+    Type: String
+    AllowedValues:
+      - Public
+      - Internal
+      - Confidential
+      - Restricted
+    Description: Data classification level for the bucket
+    
+  Owner:
+    Type: String
+    Description: Owner name for resource tagging
+  
+  Application:
+    Type: String
+    Description: Application name for resource tagging
+    
+  # New parameters for configuring lifecycle rules
+  TransitionToIADays:
+    Type: Number
+    Default: 90
+    Description: Days after which objects transition to Standard-IA storage class
+    MinValue: 30
+    
+  TransitionToGlacierDays:
+    Type: Number
+    Default: 180
+    Description: Days after which objects transition to Glacier storage class
+    MinValue: 90
+    
+  DailyBackupRetentionDays:
+    Type: Number
+    Default: 30
+    Description: Number of days to retain daily backups before expiration
+    MinValue: 1
+    
+  WeeklyBackupRetentionDays:
+    Type: Number
+    Default: 90
+    Description: Number of days to retain weekly backups before expiration
+    MinValue: 7
+    
+  MonthlyBackupRetentionDays:
+    Type: Number
+    Default: 365
+    Description: Number of days to retain monthly backups before expiration
+    MinValue: 30
+
+Resources:
+  SecureS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          # Standard lifecycle rules for storage class transitions
+          - Id: TransitionToIA
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: !Ref TransitionToIADays
+                StorageClass: STANDARD_IA
+          - Id: TransitionToGlacier
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: !Ref TransitionToGlacierDays
+                StorageClass: GLACIER
+          # Configurable expiration rules for different prefixes
+          - Id: ExpireShortTermBackups
+            Status: Enabled
+            Prefix: daily/
+            ExpirationInDays: !Ref DailyBackupRetentionDays
+          - Id: ExpireMediumTermBackups
+            Status: Enabled
+            Prefix: weekly/
+            ExpirationInDays: !Ref WeeklyBackupRetentionDays
+          - Id: ExpireLongTermBackups
+            Status: Enabled
+            Prefix: monthly/
+            ExpirationInDays: !Ref MonthlyBackupRetentionDays
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: DataClassification
+          Value: !Ref DataClassification
+        - Key: Description
+          Value: Secure bucket for file repository with restricted access
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Application
+          Value: !Ref Application
+        - Key: Author
+          Value: https://github.com/devopsvanilla/datashelter
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SecureS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyUnencryptedUploads
+            Effect: Deny
+            Principal: '*'
+            Action: s3:PutObject
+            Resource: 
+              !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}/*"
+            Condition:
+              StringNotEquals:
+                's3:x-amz-server-side-encryption': 'AES256'
+          - Sid: EnforceSecureTransport
+            Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource: 
+              - !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}"
+              - !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+
+  DataShelterUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref IamUser
+      LoginProfile:
+        Password: !Sub '${IamUser}123!'
+        PasswordResetRequired: true
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMUserChangePassword
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: DataClassification
+          Value: !Ref DataClassification
+        - Key: Description
+          Value: IAM user with limited permissions for secure file uploads
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Application
+          Value: !Ref Application
+        - Key: Author
+          Value: https://github.com/devopsvanilla/datashelter
+
+  DataShelterUserPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: 
+        Fn::Sub: 
+          - "S3UploadOnlyPolicy-${IamUser}"
+          - { IamUser: !Ref IamUser }
+      Description: Policy granting an IAM user permission to upload and tag objects in an S3 bucket while preventing deletions
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowBucketAccess
+            Effect: Allow
+            Action:
+              - s3:ListBucket
+              - s3:GetBucketLocation
+              - s3:ListBucketVersions
+              - s3:GetLifecycleConfiguration
+            Resource:
+              !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}"
+          - Sid: AllowGetBucketConfiguration
+            Effect: Allow
+            Action:
+              - s3:GetLifecycleConfiguration
+            Resource:
+              !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}"
+          - Sid: AllowObjectOperations
+            Effect: Allow
+            Action: 
+              - s3:PutObject
+              - s3:PutObjectTagging
+              - s3:GetObjectTagging
+              - s3:GetObjectAttributes
+              - s3:GetObjectRetention
+              - s3:GetObjectVersion
+              - s3:PutStorageClass
+              - s3:GetStorageClass
+              - s3:HeadObject
+              - s3:CopyObject
+            Resource:
+              !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}/*"
+          - Sid: DenyFileDeletion
+            Effect: Deny
+            Action: s3:DeleteObject
+            Resource:
+              !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}/*"
+          - Sid: DenyFileDownload
+            Effect: Deny
+            Action:
+              - s3:GetObject
+            Resource:
+              !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}/*"
+          - Sid: DenyFileDownloadAcl
+            Effect: Deny
+            Action:
+              - s3:GetObjectAcl
+            Resource:
+              !Sub "arn:${AWS::Partition}:s3:::${SecureS3Bucket}/*"
+      Users:
+        - !Ref DataShelterUser
+
+  UserAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref DataShelterUser
+
+Outputs:
+  BucketName:
+    Description: Name of the S3 bucket
+    Value: !Ref SecureS3Bucket
+
+  BucketARN:
+    Description: ARN of the created S3 bucket
+    Value: !GetAtt SecureS3Bucket.Arn
+
+  UserName:
+    Description: Name of the IAM User
+    Value: !Ref DataShelterUser
+
+  AccessKey:
+    Description: Access Key ID for the IAM User
+    Value: !Ref UserAccessKey
+
+  SecretKey:
+    Description: Secret Access Key for the IAM User
+    Value: !GetAtt UserAccessKey.SecretAccessKey
+
