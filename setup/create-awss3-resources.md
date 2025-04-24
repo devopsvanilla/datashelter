@@ -45,6 +45,35 @@ graph TD
     D -->|Permissões para| A
 ```
 
+## Permissões do Usuário IAM
+
+O usuário IAM criado pelo modelo CloudFormation terá as seguintes permissões no bucket S3:
+
+1. **Permissões de Leitura no Bucket**:
+   - Listar objetos no bucket (`s3:ListBucket`).
+   - Obter a localização do bucket (`s3:GetBucketLocation`).
+   - Listar versões de objetos no bucket (`s3:ListBucketVersions`).
+   - Obter a configuração de ciclo de vida do bucket (`s3:GetLifecycleConfiguration`).
+
+2. **Permissões de Operações em Objetos**:
+   - Fazer upload de objetos (`s3:PutObject`).
+   - Adicionar ou atualizar tags em objetos (`s3:PutObjectTagging`).
+   - Obter tags de objetos (`s3:GetObjectTagging`).
+   - Obter atributos de objetos (`s3:GetObjectAttributes`).
+   - Consultar retenção de objetos (`s3:GetObjectRetention`).
+   - Consultar versões de objetos (`s3:GetObjectVersion`).
+   - Alterar a classe de armazenamento de objetos (`s3:PutStorageClass`).
+   - Consultar a classe de armazenamento de objetos (`s3:GetStorageClass`).
+   - Consultar metadados de objetos (`s3:HeadObject`).
+   - Copiar objetos (`s3:CopyObject`).
+
+3. **Restrições de Segurança**:
+   - **Proibição de Exclusão de Objetos**: O usuário não pode excluir objetos do bucket (`s3:DeleteObject`).
+   - **Proibição de Download de Objetos**: O usuário não pode baixar objetos do bucket (`s3:GetObject`).
+   - **Proibição de Download de ACL de Objetos**: O usuário não pode acessar as ACLs de objetos (`s3:GetObjectAcl`).
+
+Essas permissões garantem que o usuário possa realizar uploads e gerenciar metadados de objetos, mas não pode excluir ou baixar arquivos, mantendo a segurança e integridade dos dados.
+
 ## Como Implantar
 
 Siga os passos abaixo para implantar o modelo na AWS usando a console web:
