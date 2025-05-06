@@ -129,23 +129,23 @@ The MySQL backup solution configuration is managed through the `values.yaml` fil
   backupDestinations:
     digitalOceanSpaces:
       enabled: true
-      accessKey: DO_ACCESS_KEY
-      secretKey: DO_SECRET_KEY
+      accessKey: DO_ACCESSKEY
+      secretKey: DO_SECRETKEY
       region: nyc3
-      bucket: my-backups
+      bucket: datashelter
     awsS3:
       enabled: false
-      accessKey: AWS_ACCESS_KEY
-      secretKey: AWS_SECRET_KEY
+      accessKey: AWS_ACCESSKEY
+      secretKey: AWS_SECRETKEY
       region: us-west-2
-      bucket: my-backups
+      bucket: datashelter
   ```
 
 - **Encryption**: Configure the RSA public key for encryption.
 
   ```yaml
   encryption:
-    rsaPublicKeyPath: /path/to/public.key
+    rsaPublicKey: /path/to/public.key
   ```
 
 - **Retention**: Configure the backup retention period.
@@ -187,7 +187,7 @@ The MySQL backup solution can be used in various scenarios to ensure reliable an
 3. Deploy the solution using Helm:
 
    ```sh
-   helm install mysql-backup ./helm/mysql-backup
+   helm install datashelter ./helm/datashelter
    ```
 
 ### Deployment Verification
@@ -213,7 +213,7 @@ kubectl logs <pod-name>
 To delete the solution, run the following command:
 
 ```sh
-helm uninstall mysql-backup
+helm uninstall datashelter
 ```
 
 ### Dependency Configuration

@@ -1,11 +1,11 @@
 apiVersion: v2
-name: mysql-backup
+name: datashelter
 description: A Helm chart for MySQL backup jobs
 version: 0.1.0
 
 maintainers:
-  - name: Sandro Cicero
-    email: sandro.cicero@example.com
+  - name: Sandro Cicero (aka DevOps Vanilla)
+    email: devopsvanilla@outlook.com
 
 keywords:
   - mysql

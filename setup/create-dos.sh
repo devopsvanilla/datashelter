@@ -41,8 +41,8 @@ fi
 # 1. Prompt all variables at the start
 prompt_env_variable "DO_SPACE_NAME" "my-space"
 prompt_env_variable "DO_SPACE_REGION" "nyc3"
-prompt_env_variable "DO_SPACE_ACCESS_KEY" ""
-prompt_env_variable "DO_SPACE_SECRET_KEY" ""
+prompt_env_variable "DO_SPACE_ACCESSKEY" ""
+prompt_env_variable "DO_SPACE_SECRETKEY" ""
 
 # Prompt for DigitalOcean token
 if [ -z "$DO_TOKEN" ] && grep -q '^DO_TOKEN=' "$ENV_FILE"; then
@@ -61,8 +61,8 @@ cat <<EOP
 Configuration summary:
   Space name: $DO_SPACE_NAME
   Region: $DO_SPACE_REGION
-  Access Key: ${DO_SPACE_ACCESS_KEY:0:4}****************
-  Secret Key: ${DO_SPACE_SECRET_KEY:0:4}****************
+  Access Key: ${DO_SPACE_ACCESSKEY:0:4}****************
+  Secret Key: ${DO_SPACE_SECRETKEY:0:4}****************
   DigitalOcean Token: $(mask_token "$DO_TOKEN")
 
 Type C to continue or any other key to cancel.
@@ -78,8 +78,8 @@ echo "💾 Saving variables to $ENV_FILE..."
 cat > "$ENV_FILE" <<EOF
 DO_SPACE_NAME=$DO_SPACE_NAME
 DO_SPACE_REGION=$DO_SPACE_REGION
-DO_SPACE_ACCESS_KEY=$DO_SPACE_ACCESS_KEY
-DO_SPACE_SECRET_KEY=$DO_SPACE_SECRET_KEY
+DO_SPACE_ACCESSKEY=$DO_SPACE_ACCESSKEY
+DO_SPACE_SECRETKEY=$DO_SPACE_SECRETKEY
 DO_TOKEN=$DO_TOKEN
 EOF
 
@@ -150,7 +150,7 @@ if doctl compute cdn list | grep -q "$DO_SPACE_NAME"; then
   echo "ℹ️  The space '$DO_SPACE_NAME' already exists. Skipping creation."
 else
   echo "📦 Creating DigitalOcean Space: $DO_SPACE_NAME..."
-  AWS_ACCESS_KEY_ID="$DO_SPACE_ACCESS_KEY" AWS_SECRET_ACCESS_KEY="$DO_SPACE_SECRET_KEY" \
+  AWS_ACCESSKEY_ID="$DO_SPACE_ACCESSKEY" AWS_SECRET_ACCESSKEY="$DO_SPACE_SECRETKEY" \
     aws --endpoint-url "https://$DO_SPACE_REGION.digitaloceanspaces.com" s3 mb "s3://$DO_SPACE_NAME"
   echo "✅ Space created: $DO_SPACE_NAME in region $DO_SPACE_REGION"
 fi

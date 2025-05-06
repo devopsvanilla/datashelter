@@ -1,8 +1,7 @@
 mysql:
   host: localhost
   port: 3306
-  username: root
-  password: password
+  username: datashelter
 
 backupTypes:
   schemaTotal: true
@@ -36,29 +35,20 @@ notifications:
       host: smtp.example.com
       port: 587
       username: user@example.com
-      password: password
     recipients: recipient1@example.com,recipient2@example.com
 
 backupDestinations:
   digitalOceanSpaces:
     enabled: true
-    accessKey: DO_ACCESS_KEY
-    secretKey: DO_SECRET_KEY
     region: nyc3
-    bucket: my-backups
+    bucket: datashelter
   awsS3:
-    enabled: false
-    accessKey: AWS_ACCESS_KEY
-    secretKey: AWS_SECRET_KEY
-    region: us-west-2
-    bucket: my-backups
+    enabled: true
+    region: us-east-1
+    bucket: datashelter
 
 image:
-  repository: seu-repo/mysql-backup-minimal
-  tag: latest
-
-encryption:
-  rsaPublicKeyPath: /path/to/public.key
+  repository: seu-repo/sua-imagem:tag
 
 retention:
   days: 30

@@ -2,7 +2,7 @@
 
 # Function to display correct script usage
 usage() {
-  echo "❌ Usage: $0 --name=my-secret --namespace=default --key \"key1|value1\" --key \"key2|value2\" --output=my-secret.yaml"
+  echo "❌ Usage: $0 --name=mysql-secret --namespace=default --key \"key1|value1\" --key \"key2|value2\" --output=mysql-secret.yaml"
   exit 1
 }
 

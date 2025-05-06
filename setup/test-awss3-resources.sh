@@ -54,7 +54,7 @@ fi
 
 # Function to display usage
 function show_usage {
-    echo "Usage: $0 --bucket=BUCKET_NAME --access-key=ACCESS_KEY --secret-key=SECRET_KEY --region=AWS_REGION [--admin-profile=PROFILE]"
+    echo "Usage: $0 --bucket=BUCKET_NAME --access-key=ACCESSKEY --secret-key=SECRETKEY --region=AWS_REGION [--admin-profile=PROFILE]"
     echo "  --bucket        : Name of the S3 bucket to test"
     echo "  --access-key    : Access key of the IAM user"
     echo "  --secret-key    : Secret key of the IAM user"
@@ -391,8 +391,8 @@ function test_admin_capabilities {
     echo -e "${YELLOW}Checking if admin profile '$ADMIN_PROFILE' exists...${NC}"
     
     # Store current credentials to restore later
-    local OLD_AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
-    local OLD_AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+    local OLD_AWS_ACCESSKEY_ID="$AWS_ACCESSKEY_ID"
+    local OLD_AWS_SECRET_ACCESSKEY="$AWS_SECRET_ACCESSKEY"
     local OLD_AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION"
     
     # First verify the profile exists by trying to use it
@@ -405,24 +405,24 @@ function test_admin_capabilities {
     fi
     
     # Profile exists, now try to get credentials
-    local admin_access_key=""
-    local admin_secret_key=""
+    local admin_ACCESSKEY=""
+    local admin_SECRETKEY=""
     local admin_region=""
     
     # Try multiple methods to get credentials
     # Method 1: Using AWS CLI configure get
     echo -e "${YELLOW}Getting credentials from profile...${NC}"
-    admin_access_key=$(aws configure get aws_access_key_id --profile "$ADMIN_PROFILE" 2>/dev/null)
-    admin_secret_key=$(aws configure get aws_secret_access_key --profile "$ADMIN_PROFILE" 2>/dev/null)
+    admin_ACCESSKEY=$(aws configure get aws_ACCESSKEY_id --profile "$ADMIN_PROFILE" 2>/dev/null)
+    admin_SECRETKEY=$(aws configure get aws_secret_ACCESSKEY --profile "$ADMIN_PROFILE" 2>/dev/null)
     admin_region=$(aws configure get region --profile "$ADMIN_PROFILE" 2>/dev/null || echo "$REGION")
     
     # Method 2: If method 1 fails, try parsing from credentials file
-    if [ -z "$admin_access_key" ] || [ -z "$admin_secret_key" ]; then
+    if [ -z "$admin_ACCESSKEY" ] || [ -z "$admin_SECRETKEY" ]; then
         echo -e "${YELLOW}Trying alternative method to get credentials...${NC}"
         if [ -f "$HOME/.aws/credentials" ]; then
             # Extract credentials using sed/grep if credentials file exists
-            admin_access_key=$(grep -A3 "\[$ADMIN_PROFILE\]" "$HOME/.aws/credentials" | grep aws_access_key_id | cut -d '=' -f2 | tr -d ' ' 2>/dev/null)
-            admin_secret_key=$(grep -A3 "\[$ADMIN_PROFILE\]" "$HOME/.aws/credentials" | grep aws_secret_access_key | cut -d '=' -f2 | tr -d ' ' 2>/dev/null)
+            admin_ACCESSKEY=$(grep -A3 "\[$ADMIN_PROFILE\]" "$HOME/.aws/credentials" | grep aws_ACCESSKEY_id | cut -d '=' -f2 | tr -d ' ' 2>/dev/null)
+            admin_SECRETKEY=$(grep -A3 "\[$ADMIN_PROFILE\]" "$HOME/.aws/credentials" | grep aws_secret_ACCESSKEY | cut -d '=' -f2 | tr -d ' ' 2>/dev/null)
         fi
         # Try to get region from config file if not found earlier
         if [ -z "$admin_region" ] && [ -f "$HOME/.aws/config" ]; then
@@ -431,7 +431,7 @@ function test_admin_capabilities {
     fi
     
     # Method 3: If all else fails but the profile works, use temporary session credentials
-    if ([ -z "$admin_access_key" ] || [ -z "$admin_secret_key" ]) && aws sts get-caller-identity --profile "$ADMIN_PROFILE" > /dev/null 2>&1; then
+    if ([ -z "$admin_ACCESSKEY" ] || [ -z "$admin_SECRETKEY" ]) && aws sts get-caller-identity --profile "$ADMIN_PROFILE" > /dev/null 2>&1; then
         echo -e "${YELLOW}Using AWS STS to get temporary credentials...${NC}"
         # Export AWS_PROFILE and use it directly in commands instead of trying to extract credentials
         export AWS_PROFILE="$ADMIN_PROFILE"
@@ -459,18 +459,18 @@ function test_admin_capabilities {
         
         # Restore original environment
         unset AWS_PROFILE
-        export AWS_ACCESS_KEY_ID="$OLD_AWS_ACCESS_KEY_ID"
-        export AWS_SECRET_ACCESS_KEY="$OLD_AWS_SECRET_ACCESS_KEY"
+        export AWS_ACCESSKEY_ID="$OLD_AWS_ACCESSKEY_ID"
+        export AWS_SECRET_ACCESSKEY="$OLD_AWS_SECRET_ACCESSKEY"
         export AWS_DEFAULT_REGION="$OLD_AWS_DEFAULT_REGION"
         
         return 0
-    elif [ -n "$admin_access_key" ] && [ -n "$admin_secret_key" ]; then
+    elif [ -n "$admin_ACCESSKEY" ] && [ -n "$admin_SECRETKEY" ]; then
         # We successfully got the credentials using method 1 or 2
         echo -e "${GREEN}✅ Admin profile credentials retrieved successfully.${NC}"
         
         # Set AWS environment variables for admin
-        export AWS_ACCESS_KEY_ID="$admin_access_key"
-        export AWS_SECRET_ACCESS_KEY="$admin_secret_key"
+        export AWS_ACCESSKEY_ID="$admin_ACCESSKEY"
+        export AWS_SECRET_ACCESSKEY="$admin_SECRETKEY"
         export AWS_DEFAULT_REGION="${admin_region:-$REGION}"
         
         echo -e "${BLUE}=== 👑 Running Additional Tests with Admin Access ===${NC}"
@@ -493,8 +493,8 @@ function test_admin_capabilities {
         test_storage_classes
         
         # Restore original credentials
-        export AWS_ACCESS_KEY_ID="$OLD_AWS_ACCESS_KEY_ID"
-        export AWS_SECRET_ACCESS_KEY="$OLD_AWS_SECRET_ACCESS_KEY"
+        export AWS_ACCESSKEY_ID="$OLD_AWS_ACCESSKEY_ID"
+        export AWS_SECRET_ACCESSKEY="$OLD_AWS_SECRET_ACCESSKEY"
         export AWS_DEFAULT_REGION="$OLD_AWS_DEFAULT_REGION"
         
         return 0
@@ -587,8 +587,8 @@ function cleanup_test_files {
     fi
     
     # For cleanup, only use admin credentials if they were verified
-    local CURRENT_ACCESS_KEY="$AWS_ACCESS_KEY_ID"
-    local CURRENT_SECRET_KEY="$AWS_SECRET_ACCESS_KEY"
+    local CURRENT_ACCESSKEY="$AWS_ACCESSKEY_ID"
+    local CURRENT_SECRETKEY="$AWS_SECRET_ACCESSKEY"
     local CURRENT_REGION="$AWS_DEFAULT_REGION"
     
     if [ ! -z "$ADMIN_PROFILE" ] && [ "$ADMIN_TESTS_SKIPPED" = false ]; then
@@ -638,16 +638,16 @@ function cleanup_test_files {
         else
             # Traditional method using credentials if profile method fails
             # Get admin credentials again
-            local admin_access_key
-            admin_access_key=$(aws configure get aws_access_key_id --profile "$ADMIN_PROFILE")
+            local admin_ACCESSKEY
+            admin_ACCESSKEY=$(aws configure get aws_ACCESSKEY_id --profile "$ADMIN_PROFILE")
             
-            local admin_secret_key
-            admin_secret_key=$(aws configure get aws_secret_access_key --profile "$ADMIN_PROFILE")
+            local admin_SECRETKEY
+            admin_SECRETKEY=$(aws configure get aws_secret_ACCESSKEY --profile "$ADMIN_PROFILE")
             local admin_region
             admin_region=$(aws configure get region --profile "$ADMIN_PROFILE" || echo "$REGION")
             
-            export AWS_ACCESS_KEY_ID="$admin_access_key"
-            export AWS_SECRET_ACCESS_KEY="$admin_secret_key"
+            export AWS_ACCESSKEY_ID="$admin_ACCESSKEY"
+            export AWS_SECRET_ACCESSKEY="$admin_SECRETKEY"
             export AWS_DEFAULT_REGION="${admin_region:-$REGION}"
         fi
     fi
@@ -684,8 +684,8 @@ function cleanup_test_files {
     fi
 
     # Restore original credentials
-    export AWS_ACCESS_KEY_ID="$CURRENT_ACCESS_KEY"
-    export AWS_SECRET_ACCESS_KEY="$CURRENT_SECRET_KEY" 
+    export AWS_ACCESSKEY_ID="$CURRENT_ACCESSKEY"
+    export AWS_SECRET_ACCESSKEY="$CURRENT_SECRETKEY" 
     export AWS_DEFAULT_REGION="$CURRENT_REGION"
 }
 
@@ -734,11 +734,11 @@ for i in "$@"; do
         shift
         ;;
         --access-key=*)
-        ACCESS_KEY="${i#*=}"
+        ACCESSKEY="${i#*=}"
         shift
         ;;
         --secret-key=*)
-        SECRET_KEY="${i#*=}"
+        SECRETKEY="${i#*=}"
         shift
         ;;
         --region=*)
@@ -758,12 +758,12 @@ for i in "$@"; do
 done
 
 # Interactive parameter collection if not provided
-if [ -z "$BUCKET_NAME" ] || [ -z "$ACCESS_KEY" ] || [ -z "$SECRET_KEY" ] || [ -z "$REGION" ]; then
+if [ -z "$BUCKET_NAME" ] || [ -z "$ACCESSKEY" ] || [ -z "$SECRETKEY" ] || [ -z "$REGION" ]; then
     echo -e "${BLUE}Some required parameters are missing. Let's collect them interactively:${NC}"
     
     [ -z "$BUCKET_NAME" ] && get_input "Enter S3 bucket name" "BUCKET_NAME"
-    [ -z "$ACCESS_KEY" ] && get_input "Enter IAM user access key" "ACCESS_KEY"
-    [ -z "$SECRET_KEY" ] && get_input "Enter IAM user secret key" "SECRET_KEY"
+    [ -z "$ACCESSKEY" ] && get_input "Enter IAM user access key" "ACCESSKEY"
+    [ -z "$SECRETKEY" ] && get_input "Enter IAM user secret key" "SECRETKEY"
     [ -z "$REGION" ] && get_input "Enter AWS region" "REGION"
     
     if [ -z "$ADMIN_PROFILE" ]; then
@@ -774,8 +774,8 @@ fi
 # Display parameters and ask for confirmation
 echo -e "\n${BLUE}=============== TEST PARAMETERS ===============${NC}"
 echo -e "${BLUE}S3 Bucket:${NC} $BUCKET_NAME"
-echo -e "${BLUE}Access Key:${NC} $ACCESS_KEY"
-echo -e "${BLUE}Secret Key:${NC} ${SECRET_KEY:0:4}****${SECRET_KEY: -4}" # Show only first 4 and last 4 characters
+echo -e "${BLUE}Access Key:${NC} $ACCESSKEY"
+echo -e "${BLUE}Secret Key:${NC} ${SECRETKEY:0:4}****${SECRETKEY: -4}" # Show only first 4 and last 4 characters
 echo -e "${BLUE}AWS Region:${NC} $REGION"
 if [ ! -z "$ADMIN_PROFILE" ]; then
     echo -e "${BLUE}Admin Profile:${NC} $ADMIN_PROFILE"
@@ -799,8 +799,8 @@ TEMP_CONFIG_DIR=$(mktemp -d)
 trap 'rm -rf $TEMP_CONFIG_DIR' EXIT
 
 # Set AWS credentials directly as environment variables instead of using profiles
-export AWS_ACCESS_KEY_ID="$ACCESS_KEY"
-export AWS_SECRET_ACCESS_KEY="$SECRET_KEY" 
+export AWS_ACCESSKEY_ID="$ACCESSKEY"
+export AWS_SECRET_ACCESSKEY="$SECRETKEY" 
 export AWS_DEFAULT_REGION="$REGION"
 
 # Empty PROFILE_ARG as we're not using profiles anymore

@@ -1,14 +1,38 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mysql-backup-config
+  name: datashelter-config
 data:
-  backupTypes: |
-    schemaTotal: {{ .Values.backupTypes.schemaTotal }}
-    schemaIncremental: {{ .Values.backupTypes.schemaIncremental }}
-    serverTotal: {{ .Values.backupTypes.serverTotal }}
-    serverIncremental: {{ .Values.backupTypes.serverIncremental }}
-  scheduling: |
-    frequency: {{ .Values.scheduling.frequency }}
-    time: {{ .Values.scheduling.time }}
-    maxExecutionTime: {{ .Values.scheduling.maxExecutionTime }}
+  MYSQL_HOST: {{ .Values.mysql.host }}
+  MYSQL_PORT: "{{ .Values.mysql.port }}"
+  MYSQL_USER: {{ .Values.mysql.username }}
+  BACKUP_SCHEMA_TOTAL: "{{ .Values.backupTypes.schemaTotal }}"
+  BACKUP_SCHEMA_INCREMENTAL: "{{ .Values.backupTypes.schemaIncremental }}"
+  BACKUP_SERVER_TOTAL: "{{ .Values.backupTypes.serverTotal }}"
+  BACKUP_SERVER_INCREMENTAL: "{{ .Values.backupTypes.serverIncremental }}"
+  SCHEDULE_SCHEMA_TOTAL_FREQUENCY: {{ .Values.scheduling.schemaTotal.frequency }}
+  SCHEDULE_SCHEMA_TOTAL_TIME: "{{ .Values.scheduling.schemaTotal.time }}"
+  SCHEDULE_SCHEMA_TOTAL_MAX_EXECUTION_TIME: "{{ .Values.scheduling.schemaTotal.maxExecutionTime }}"
+  SCHEDULE_SCHEMA_INCREMENTAL_FREQUENCY: {{ .Values.scheduling.schemaIncremental.frequency }}
+  SCHEDULE_SCHEMA_INCREMENTAL_TIME: "{{ .Values.scheduling.schemaIncremental.time }}"
+  SCHEDULE_SCHEMA_INCREMENTAL_MAX_EXECUTION_TIME: "{{ .Values.scheduling.schemaIncremental.maxExecutionTime }}"
+  SCHEDULE_SERVER_TOTAL_FREQUENCY: {{ .Values.scheduling.serverTotal.frequency }}
+  SCHEDULE_SERVER_TOTAL_DAYOFWEEK: {{ .Values.scheduling.serverTotal.dayOfWeek }}
+  SCHEDULE_SERVER_TOTAL_TIME: "{{ .Values.scheduling.serverTotal.time }}"
+  SCHEDULE_SERVER_TOTAL_MAX_EXECUTION_TIME: "{{ .Values.scheduling.serverTotal.maxExecutionTime }}"
+  SCHEDULE_SERVER_INCREMENTAL_FREQUENCY: {{ .Values.scheduling.serverIncremental.frequency }}
+  SCHEDULE_SERVER_INCREMENTAL_TIME: "{{ .Values.scheduling.serverIncremental.time }}"
+  SCHEDULE_SERVER_INCREMENTAL_MAX_EXECUTION_TIME: "{{ .Values.scheduling.serverIncremental.maxExecutionTime }}"
+  NOTIFICATION_EMAIL_ENABLED: "{{ .Values.notifications.email.enabled }}"
+  SMTP_HOST: {{ .Values.notifications.email.smtp.host }}
+  SMTP_PORT: "{{ .Values.notifications.email.smtp.port }}"
+  SMTP_USER: {{ .Values.notifications.email.smtp.username }}
+  NOTIFICATION_EMAIL_RECIPIENTS: {{ .Values.notifications.email.recipients }}
+  DO_SPACES_ENABLED: "{{ .Values.backupDestinations.digitalOceanSpaces.enabled }}"
+  DO_SPACES_REGION: {{ .Values.backupDestinations.digitalOceanSpaces.region }}
+  DO_SPACES_BUCKET: {{ .Values.backupDestinations.digitalOceanSpaces.bucket }}
+  AWS_S3_ENABLED: "{{ .Values.backupDestinations.awsS3.enabled }}"
+  AWS_S3_REGION: {{ .Values.backupDestinations.awsS3.region }}
+  AWS_S3_BUCKET: {{ .Values.backupDestinations.awsS3.bucket }}
+  IMAGE: {{ .Values.image.repository }}
+  RETENTION_DAYS: "{{ .Values.retention.days }}"

@@ -67,7 +67,7 @@ fi
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
-DOCKER_CONTEXT="$PROJECT_ROOT/images/mysql-backup-minimal"
+DOCKER_CONTEXT="$PROJECT_ROOT/images/datashelter-minimal"
 
 # 2. Show summary and ask for confirmation
 cat <<EOP
@@ -132,3 +132,4 @@ docker build -t "$DOCKER_IMAGE_FULL" "$DOCKER_CONTEXT"
 echo "📤 Pushing Docker image to registry..."
 docker push "$DOCKER_IMAGE_FULL"
 echo "✅ Docker image pushed: $DOCKER_IMAGE_FULL"
+

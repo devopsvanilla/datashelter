@@ -129,23 +129,23 @@ A configuração da solução de backup de MySQL é gerenciada através do arqui
   backupDestinations:
     digitalOceanSpaces:
       enabled: true
-      accessKey: DO_ACCESS_KEY
-      secretKey: DO_SECRET_KEY
+      accessKey: DO_ACCESSKEY
+      secretKey: DO_SECRETKEY
       region: nyc3
-      bucket: my-backups
+      bucket: datashelter
     awsS3:
       enabled: false
-      accessKey: AWS_ACCESS_KEY
-      secretKey: AWS_SECRET_KEY
+      accessKey: AWS_ACCESSKEY
+      secretKey: AWS_SECRETKEY
       region: us-west-2
-      bucket: my-backups
+      bucket: datashelter
   ```
 
 - **Criptografia**: Configure a chave pública RSA para criptografia.
 
   ```yaml
   encryption:
-    rsaPublicKeyPath: /path/to/public.key
+    rsaPublicKey: /path/to/public.key
   ```
 
 - **Retenção**: Configure o período de retenção dos backups.
@@ -187,7 +187,7 @@ A solução de backup de MySQL pode ser utilizada em diversos cenários para gar
 3. Implante a solução utilizando Helm:
 
    ```sh
-   helm install mysql-backup ./helm/mysql-backup
+   helm install datashelter ./helm/datashelter
    ```
 
 ### Verificação da Implantação
@@ -213,7 +213,7 @@ kubectl logs <nome-do-pod>
 Para excluir a solução, execute o seguinte comando:
 
 ```sh
-helm uninstall mysql-backup
+helm uninstall datashelter
 ```
 
 ### Configuração de Dependências

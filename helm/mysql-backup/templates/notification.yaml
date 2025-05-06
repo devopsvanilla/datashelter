@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: mysql-backup-notification
+  name: datashelter-notification
 spec:
   template:
     spec:
@@ -25,5 +25,5 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: mysql-backup-config
+            name: datashelter-config
       restartPolicy: Never

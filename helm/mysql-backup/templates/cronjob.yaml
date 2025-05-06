@@ -1,73 +1,212 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: mysql-backup-cronjob
+  name: datashelter-cronjob
 spec:
-  schedule: "{{ .Values.scheduling.frequency }}"
+  schedule: "{{ .Values.scheduling.schemaTotal.frequency }}" # O schedule do CronJob pode ser mantido via values.yaml, mas pode ser referenciado do ConfigMap se desejar
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-            - name: mysql-backup
-              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            - name: datashelter-cronjob
+              image: "{{ .Values.image.repository }}"
               env:
                 - name: MYSQL_HOST
-                  value: {{ .Values.mysql.host }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: MYSQL_HOST
                 - name: MYSQL_PORT
-                  value: {{ .Values.mysql.port }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: MYSQL_PORT
                 - name: MYSQL_USER
                   valueFrom:
-                    secretKeyRef:
-                      name: mysql-backup-secret
-                      key: username
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: MYSQL_USER
                 - name: MYSQL_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: mysql-backup-secret
+                      name: mysql-secret
                       key: password
-                - name: BACKUP_TYPE
-                  value: {{ .Values.backupTypes }}
-                - name: BACKUP_FREQUENCY
-                  value: {{ .Values.scheduling.frequency }}
-                - name: BACKUP_TIME
-                  value: {{ .Values.scheduling.time }}
-                - name: MAX_EXECUTION_TIME
-                  value: {{ .Values.scheduling.maxExecutionTime }}
-                - name: NOTIFICATION_EMAIL
-                  value: {{ .Values.notifications.email.enabled }}
+                - name: BACKUP_SCHEMA_TOTAL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: BACKUP_SCHEMA_TOTAL
+                - name: BACKUP_SCHEMA_INCREMENTAL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: BACKUP_SCHEMA_INCREMENTAL
+                - name: BACKUP_SERVER_TOTAL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: BACKUP_SERVER_TOTAL
+                - name: BACKUP_SERVER_INCREMENTAL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: BACKUP_SERVER_INCREMENTAL
+                - name: SCHEDULE_SCHEMA_TOTAL_FREQUENCY
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SCHEMA_TOTAL_FREQUENCY
+                - name: SCHEDULE_SCHEMA_TOTAL_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SCHEMA_TOTAL_TIME
+                - name: SCHEDULE_SCHEMA_TOTAL_MAX_EXECUTION_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SCHEMA_TOTAL_MAX_EXECUTION_TIME
+                - name: SCHEDULE_SCHEMA_INCREMENTAL_FREQUENCY
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SCHEMA_INCREMENTAL_FREQUENCY
+                - name: SCHEDULE_SCHEMA_INCREMENTAL_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SCHEMA_INCREMENTAL_TIME
+                - name: SCHEDULE_SCHEMA_INCREMENTAL_MAX_EXECUTION_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SCHEMA_INCREMENTAL_MAX_EXECUTION_TIME
+                - name: SCHEDULE_SERVER_TOTAL_FREQUENCY
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SERVER_TOTAL_FREQUENCY
+                - name: SCHEDULE_SERVER_TOTAL_DAYOFWEEK
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SERVER_TOTAL_DAYOFWEEK
+                - name: SCHEDULE_SERVER_TOTAL_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SERVER_TOTAL_TIME
+                - name: SCHEDULE_SERVER_TOTAL_MAX_EXECUTION_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SERVER_TOTAL_MAX_EXECUTION_TIME
+                - name: SCHEDULE_SERVER_INCREMENTAL_FREQUENCY
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SERVER_INCREMENTAL_FREQUENCY
+                - name: SCHEDULE_SERVER_INCREMENTAL_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SERVER_INCREMENTAL_TIME
+                - name: SCHEDULE_SERVER_INCREMENTAL_MAX_EXECUTION_TIME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SCHEDULE_SERVER_INCREMENTAL_MAX_EXECUTION_TIME
+                - name: NOTIFICATION_EMAIL_ENABLED
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: NOTIFICATION_EMAIL_ENABLED
                 - name: SMTP_HOST
-                  value: {{ .Values.notifications.email.smtp.host }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SMTP_HOST
                 - name: SMTP_PORT
-                  value: {{ .Values.notifications.email.smtp.port }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SMTP_PORT
                 - name: SMTP_USER
-                  value: {{ .Values.notifications.email.smtp.username }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: SMTP_USER
                 - name: SMTP_PASSWORD
-                  value: {{ .Values.notifications.email.smtp.password }}
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secret
+                      key: password
+                - name: NOTIFICATION_EMAIL_RECIPIENTS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: NOTIFICATION_EMAIL_RECIPIENTS
                 - name: DO_SPACES_ENABLED
-                  value: {{ .Values.backupDestinations.digitalOceanSpaces.enabled }}
-                - name: DO_SPACES_ACCESS_KEY
-                  value: {{ .Values.backupDestinations.digitalOceanSpaces.accessKey }}
-                - name: DO_SPACES_SECRET_KEY
-                  value: {{ .Values.backupDestinations.digitalOceanSpaces.secretKey }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: DO_SPACES_ENABLED
+                - name: DO_SPACES_ACCESSKEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: do-spaces-secret
+                      key: accessKey
+                - name: DO_SPACES_SECRETKEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: do-spaces-secret
+                      key: secretKey
                 - name: DO_SPACES_REGION
-                  value: {{ .Values.backupDestinations.digitalOceanSpaces.region }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: DO_SPACES_REGION
                 - name: DO_SPACES_BUCKET
-                  value: {{ .Values.backupDestinations.digitalOceanSpaces.bucket }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: DO_SPACES_BUCKET
                 - name: AWS_S3_ENABLED
-                  value: {{ .Values.backupDestinations.awsS3.enabled }}
-                - name: AWS_S3_ACCESS_KEY
-                  value: {{ .Values.backupDestinations.awsS3.accessKey }}
-                - name: AWS_S3_SECRET_KEY
-                  value: {{ .Values.backupDestinations.awsS3.secretKey }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: AWS_S3_ENABLED
+                - name: AWS_S3_ACCESSKEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-s3-secret
+                      key: accessKey
+                - name: AWS_S3_SECRETKEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-s3-secret
+                      key: secretKey
                 - name: AWS_S3_REGION
-                  value: {{ .Values.backupDestinations.awsS3.region }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: AWS_S3_REGION
                 - name: AWS_S3_BUCKET
-                  value: {{ .Values.backupDestinations.awsS3.bucket }}
-                - name: RSA_PUBLIC_KEY
-                  value: {{ .Values.encryption.rsaPublicKeyPath }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: AWS_S3_BUCKET
+                - name: RSA_PUBLICKEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: rsa-publickey-secret
+                      key: publicKey
                 - name: RETENTION_DAYS
-                  value: {{ .Values.retention.days }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: datashelter-config
+                      key: RETENTION_DAYS
               volumeMounts:
                 - name: backup-storage
                   mountPath: /backup
