@@ -2,5 +2,21 @@
   "yaml.schemas": {
     "file:///home/devopsvanilla/.vscode-server/extensions/docsmsft.docs-yaml-1.0.5/dist/toc.schema.json": "/toc\\.yml/i",
     "https://raw.githubusercontent.com/awslabs/goformation/master/schema/cloudformation.schema.json": "file:///home/devopsvanilla/_prj/devopsvanilla/datashelter/setup/create-awss3-cfn.yaml"
-  }
+  },
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "127.0.0.1",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "datashelter-mysql",
+      "group": "datashelter",
+      "database": "datashelter_sampledb",
+      "username": "root"
+    }
+  ]
 }

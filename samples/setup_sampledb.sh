@@ -25,14 +25,14 @@ install_mysql_client() {
 }
 
 # Prompt for database connection settings
-read -p "Enter MySQL host [localhost]: " MYSQL_HOST
-MYSQL_HOST=${MYSQL_HOST:-localhost}
+read -p "Enter MySQL host [127.0.0.1]: " MYSQL_HOST
+MYSQL_HOST=${MYSQL_HOST:-127.0.0.1}
 
 read -p "Enter MySQL user [root]: " MYSQL_USER
 MYSQL_USER=${MYSQL_USER:-root}
 
-read -p "Enter database name [datashelter_sample_db]: " DATABASE_NAME
-DATABASE_NAME=${DATABASE_NAME:-datashelter_sample_db}
+read -p "Enter database name [datashelter_sampledb]: " DATABASE_NAME
+DATABASE_NAME=${DATABASE_NAME:-datashelter_sampledb}
 
 # Prompt for password securely
 while [[ -z "$MYSQL_PASSWORD" ]]; do
