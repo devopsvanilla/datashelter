@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
             - name: mysql-backup
-              image: mysql:5.7
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
               env:
                 - name: MYSQL_HOST
                   value: {{ .Values.mysql.host }}
